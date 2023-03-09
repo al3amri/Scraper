@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Instagram Collector</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link href="style.css" rel="stylesheet">
+	<style>
+		/* Reduce font size on smaller screens */
+		@media screen and (max-width: 768px) {
+		  h1 {
+		    font-size: 24px;
+		  }
+		  .sub_btn {
+		    font-size: 14px;
+		  }
+		}
+	</style>
+</head>
+<body class="bg-light">
+	<div class="text-center m-5">
+		<h1 class="m-5"><b>Letto Scraper</b></h1>
+		<textarea rows="2" placeholder="username" name="user_list" required></textarea>
+		<button onclick="collectData();return false;" class="sub_btn mb-3">Grab Data</button>
+		<div style="display: none" id="loading" class="loader"></div>
+		<div style="display: none" id="result_title"><b>Your Results</b></div>
+		<textarea style="display: none" id="answer" rows="13" placeholder="result"></textarea>
+		<div id="hire" style="display: none;">Made with ❤️</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		function getDetails(url,username)
+		{
+			$.ajax({
+			    type: "GET",
+			    headers: {
+				"X-RapidAPI-Key": "8d9ae15bc4msh96b4693811332b1p166c78jsn2d6c057583ec",
+				"X-RapidAPI-Host": "instagram-api-media-downloader.p.rapidapi.com"
+			     
+			    },
+			    url: url,
+			    success: function (data) {
+			    	var full_name = data.result.user.full_name;
+			    	var followers = data.result.user.follower_count;
+			    	var following =  data.result.user.following_count;
+			    	var posts =  data.result.user.media_count;
+					
+					
+			    	var bio =  data.result.user.biography;
+			    	var profile_pic_url =  data.result.user.profile_pic_url;
+			    	var userid =  data.result.user.strong_id__;
+			    	var totaltag =  data.result.user.usertags_count;
+			    	//$('body').scrollTo('#result_title');
+			    	$('#loading').fadeOut("slow");
+			    	$('#answer').fadeIn("slow");
+			    	$('#result_title').fadeIn("slow");
+			    	$('#hire').fadeIn("slow");
+			    	$('html, body').animate({
+					    scrollTop: ($('#answer').offset().top)
+					},1000);
+					var last_seen = $('#answer').val();
+			       	$('#answer').val(last_seen + "\nUser : " + username + "\nUser id: " + userid + "\nFull Name: " + full_name + "\nBio: " + bio + "\nFollowers: "+followers + "\nFollowing: " + following + "\nPosts: " + posts + "\nTotal Tags: " + totaltag + "\nAvatar Link: \n" + profile_pic_url + "\n-");
+
+			    }
+			});
+		}
+		function collectData()
+		{
+			$('#answer').fadeOut("slow");
+			$('#answer').val("");
+			$('#loading').fadeIn("slow");
+			$('#result_title').fadeOut("slow");
+			$('#hire').fadeOut("slow");
+			var userInput = $('textarea[name="user_list"]').val().split('\n');
+			for(var i=0;i<userInput.length;i++)
+			{
+				getDetails("https://instagram-api-media-downloader.p.rapidapi.com/ig/userInfoByUsername/" + userInput[i], userInput[i]);
+			}
+		}
+	</script>
+</body>
+</html>
